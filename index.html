@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>像素图片转换器 | Pixel Image Converter</title>
+    <link rel="stylesheet" href="styles.css">
+    <!-- 添加苹果风格的图标 -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+</head>
+<body>
+    <div class="app-container">
+        <header>
+            <h1>像素图片转换器</h1>
+            <p>将普通图片转换为像素风格图片</p>
+            <div class="theme-toggle">
+                <button id="theme-switch" aria-label="切换主题">
+                    <svg class="sun-icon" viewBox="0 0 24 24" width="24" height="24">
+                        <circle cx="12" cy="12" r="5"></circle>
+                        <line x1="12" y1="1" x2="12" y2="3"></line>
+                        <line x1="12" y1="21" x2="12" y2="23"></line>
+                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                        <line x1="1" y1="12" x2="3" y2="12"></line>
+                        <line x1="21" y1="12" x2="23" y2="12"></line>
+                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                    </svg>
+                    <svg class="moon-icon" viewBox="0 0 24 24" width="24" height="24">
+                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                    </svg>
+                </button>
+            </div>
+        </header>
+
+        <main>
+            <section class="upload-section">
+                <div class="upload-container" id="upload-container">
+                    <div class="upload-icon">
+                        <svg viewBox="0 0 24 24" width="48" height="48">
+                            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                            <polyline points="17 8 12 3 7 8"></polyline>
+                            <line x1="12" y1="3" x2="12" y2="15"></line>
+                        </svg>
+                    </div>
+                    <h2>上传图片</h2>
+                    <p>点击或拖放图片到此区域</p>
+                    <p class="upload-info">支持JPG、PNG、GIF、WebP格式</p>
+                    <input type="file" id="file-input" multiple accept="image/*" class="file-input">
+                </div>
+                <div class="thumbnails-container" id="thumbnails-container">
+                    <!-- 上传的图片缩略图将显示在这里 -->
+                </div>
+            </section>
+
+            <section class="controls-section">
+                <h2>像素化参数</h2>
+                <div class="control-group">
+                    <label for="pixel-size">像素大小：</label>
+                    <input type="range" id="pixel-size" min="1" max="20" value="8" class="slider">
+                    <span class="slider-value" id="pixel-size-value">8</span>px
+                </div>
+                <div class="control-group">
+                    <label for="color-mode">色彩模式：</label>
+                    <select id="color-mode" class="select-control">
+                        <option value="original">原始色彩</option>
+                        <option value="limited">有限调色板 (16色)</option>
+                        <option value="grayscale">灰度</option>
+                        <option value="sepia">复古色调</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="dithering">抖动效果：</label>
+                    <input type="checkbox" id="dithering" class="toggle-switch">
+                </div>
+                <div class="control-group">
+                    <label for="smooth">平滑处理：</label>
+                    <input type="checkbox" id="smooth" class="toggle-switch">
+                </div>
+                <div class="control-group">
+                    <label for="output-size">输出尺寸：</label>
+                    <select id="output-size" class="select-control">
+                        <option value="original">原始尺寸</option>
+                        <option value="2x">2倍大小</option>
+                        <option value="4x">4倍大小</option>
+                    </select>
+                </div>
+                <div class="control-group">
+                    <label for="output-format">输出格式：</label>
+                    <select id="output-format" class="select-control">
+                        <option value="png">PNG</option>
+                        <option value="jpg">JPG</option>
+                    </select>
+                </div>
+                <div class="preset-controls">
+                    <h3>预设</h3>
+                    <div class="preset-buttons">
+                        <button class="preset-button" data-preset="gameboy">Game Boy</button>
+                        <button class="preset-button" data-preset="nes">NES 8位</button>
+                        <button class="preset-button" data-preset="cga">CGA</button>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    <button id="process-btn" class="primary-button" disabled>开始处理</button>
+                    <button id="clear-btn" class="secondary-button" disabled>清除全部</button>
+                </div>
+            </section>
+
+            <section class="preview-section">
+                <h2>预览与结果</h2>
+                <div class="preview-container" id="preview-container">
+                    <div class="empty-preview">
+                        <p>上传图片后在此处预览结果</p>
+                    </div>
+                </div>
+                <div class="progress-bar-container hidden" id="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                    <div class="progress-text" id="progress-text">0%</div>
+                </div>
+                <div class="result-actions hidden" id="result-actions">
+                    <button id="download-all-btn" class="primary-button">下载全部(ZIP)</button>
+                    <button id="download-selected-btn" class="secondary-button">下载选中</button>
+                </div>
+            </section>
+        </main>
+
+        <footer>
+            <p>像素图片转换器 &copy; 2023 | 在浏览器中本地处理，您的图片不会上传至任何服务器</p>
+            <a href="#" id="help-btn">使用帮助</a>
+        </footer>
+
+        <!-- 帮助对话框 -->
+        <div class="modal" id="help-modal">
+            <div class="modal-content">
+                <span class="close-modal">&times;</span>
+                <h2>使用帮助</h2>
+                <h3>如何使用</h3>
+                <ol>
+                    <li>点击上传区域或将图片拖放到上传区域</li>
+                    <li>调整像素化参数</li>
+                    <li>点击"开始处理"按钮</li>
+                    <li>等待处理完成后，可以预览结果并下载</li>
+                </ol>
+                <h3>参数说明</h3>
+                <ul>
+                    <li><strong>像素大小</strong>：控制像素的粒度，值越大，像素块越大</li>
+                    <li><strong>色彩模式</strong>：选择不同的色彩处理方式</li>
+                    <li><strong>抖动效果</strong>：增加一些随机性，使色彩过渡更平滑</li>
+                    <li><strong>平滑处理</strong>：对像素化结果进行平滑处理</li>
+                    <li><strong>输出尺寸</strong>：控制最终图片的尺寸</li>
+                    <li><strong>输出格式</strong>：选择保存的图片格式</li>
+                </ul>
+                <h3>预设说明</h3>
+                <ul>
+                    <li><strong>Game Boy</strong>：使用经典Game Boy的4色调色板</li>
+                    <li><strong>NES 8位</strong>：模拟任天堂NES游戏机的色彩和像素效果</li>
+                    <li><strong>CGA</strong>：模拟早期CGA显示器的色彩方案</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+    <!-- 如果需要使用JSZip库来进行ZIP打包下载 -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+</body>
+</html> 
