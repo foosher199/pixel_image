@@ -143,11 +143,20 @@ main {
         grid-column: 2;
         grid-row: 1 / span 2;
     }
+    
+    .upload-section {
+        grid-column: 1;
+        grid-row: 1;
+    }
 }
 
 /* 上传区域样式 */
 .upload-section {
     margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* 使子元素在水平方向居中 */
+    width: 100%;
 }
 
 .upload-container {
@@ -159,6 +168,8 @@ main {
     cursor: pointer;
     transition: var(--transition);
     box-shadow: var(--shadow);
+    width: 100%; /* 占据父容器的100%宽度 */
+    max-width: 600px; /* 限制最大宽度 */
 }
 
 .upload-container:hover {
@@ -200,18 +211,88 @@ main {
 
 .thumbnails-container {
     display: flex;
-    flex-wrap: wrap;
     gap: 10px;
     margin-top: 20px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+    padding: 14px 12px;
+    -webkit-overflow-scrolling: touch; /* 提升iOS上的滚动体验 */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: var(--primary-color) var(--border-color); /* Firefox */
+    width: 100%; /* 使用容器100%宽度 */
+    max-width: 600px; /* 与上传区域保持一致 */
+    box-sizing: border-box;
+    background-color: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    min-height: 128px; /* 缩略图高度(100px) + 上下内边距(2×14px) */
+    align-items: center;
+    position: relative; /* 为滚动指示器设置定位上下文 */
+}
+
+/* 添加渐变滚动指示器 */
+.thumbnails-container::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 40px;
+    background: linear-gradient(to right, transparent, var(--card-bg));
+    pointer-events: none; /* 确保不会影响鼠标事件 */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.thumbnails-container.has-overflow::after {
+    opacity: 1;
+}
+
+.thumbnails-container:empty {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.thumbnails-container:empty::after {
+    content: '上传图片后将在此处显示';
+    color: var(--text-color);
+    opacity: 0.5;
+    font-size: 14px;
+}
+
+/* 自定义滚动条样式 */
+.thumbnails-container::-webkit-scrollbar {
+    height: 6px;
+}
+
+.thumbnails-container::-webkit-scrollbar-track {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.thumbnails-container::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 3px;
 }
 
 .thumbnail {
     width: 100px;
     height: 100px;
-    border-radius: var(--radius);
+    border-radius: calc(var(--radius) - 2px);
     overflow: hidden;
     position: relative;
     box-shadow: var(--shadow);
+    flex-shrink: 0; /* 防止缩略图被压缩 */
+    border: 2px solid transparent;
+    transition: var(--transition);
+}
+
+.thumbnail:hover {
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
 }
 
 .thumbnail img {
@@ -432,9 +513,11 @@ main {
     border-radius: var(--radius);
     padding: 20px;
     box-shadow: var(--shadow);
-    min-height: 400px;
     display: flex;
     flex-direction: column;
+    height: 100%;
+    min-height: 600px; /* 设置最小高度 */
+    max-height: 800px; /* 设置最大高度 */
 }
 
 .preview-section h2 {
@@ -442,21 +525,46 @@ main {
     font-weight: 600;
     padding-bottom: 10px;
     border-bottom: 1px solid var(--border-color);
+    flex-shrink: 0; /* 防止标题被压缩 */
 }
 
 .preview-container {
     flex: 1;
-    overflow: auto;
+    overflow-y: auto; /* 垂直方向可滚动 */
+    overflow-x: hidden; /* 水平方向不滚动 */
     background-color: rgba(0, 0, 0, 0.03);
     border-radius: var(--radius);
     margin-bottom: 20px;
-    min-height: 300px;
+    padding: 20px 15px;
     display: flex;
     flex-wrap: wrap;
-    gap: 15px;
-    padding: 15px;
+    gap: 20px;
     justify-content: center;
     align-content: flex-start;
+    min-height: 300px;
+    /* 自定义滚动条样式 */
+    scrollbar-width: thin; /* Firefox */
+    scrollbar-color: var(--primary-color) var(--border-color); /* Firefox */
+    position: relative; /* 为滚动指示器设置定位上下文 */
+}
+
+/* 添加滚动阴影指示器 */
+.preview-container::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 30px;
+    background: linear-gradient(to bottom, transparent, rgba(0, 0, 0, 0.03));
+    pointer-events: none; /* 确保不会影响鼠标事件 */
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    border-radius: 0 0 var(--radius) var(--radius);
+}
+
+.preview-container.has-overflow::after {
+    opacity: 1;
 }
 
 .empty-preview {
@@ -472,16 +580,18 @@ main {
 .result-item {
     position: relative;
     width: calc(50% - 10px);
-    margin-bottom: 15px;
+    margin-bottom: 5px; /* 减小底部间距，因为我们已经有了gap */
     border-radius: var(--radius);
     overflow: hidden;
     box-shadow: var(--shadow);
     cursor: pointer;
     transition: var(--transition);
+    border: 2px solid transparent;
 }
 
 .result-item:hover {
-    transform: scale(1.02);
+    transform: translateY(-2px);
+    border-color: var(--primary-color);
 }
 
 .result-item.selected {
@@ -499,12 +609,24 @@ main {
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(0, 0, 0, 0.6);
+    background: rgba(0, 0, 0, 0.7);
     color: white;
-    padding: 8px;
+    padding: 10px;
     font-size: 14px;
     display: flex;
     justify-content: space-between;
+    align-items: center;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.result-item:hover .result-overlay {
+    opacity: 1;
+}
+
+.result-item.selected .result-overlay {
+    opacity: 1;
+    background: rgba(0, 122, 255, 0.7); /* 选中时使用主题色 */
 }
 
 .result-item .download-btn {
@@ -512,6 +634,13 @@ main {
     border: none;
     color: white;
     cursor: pointer;
+    padding: 5px 10px;
+    border-radius: var(--radius);
+    transition: var(--transition);
+}
+
+.result-item .download-btn:hover {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 .progress-bar-container {
@@ -521,6 +650,7 @@ main {
     margin-bottom: 20px;
     position: relative;
     overflow: hidden;
+    flex-shrink: 0; /* 防止进度条被压缩 */
 }
 
 .progress-bar {
@@ -544,6 +674,7 @@ main {
 .result-actions {
     display: flex;
     gap: 10px;
+    flex-shrink: 0; /* 防止按钮区域被压缩 */
 }
 
 /* 隐藏元素 */
@@ -654,4 +785,72 @@ footer a:hover {
     .result-item {
         width: 100%;
     }
+    
+    .upload-container, .thumbnails-container {
+        max-width: 100%; /* 在小屏幕上占满宽度 */
+    }
+    
+    /* 在小屏幕上调整预览区域的高度 */
+    .preview-section {
+        min-height: 500px;
+        max-height: 600px;
+    }
+}
+
+/* 通知样式 */
+.notification {
+    position: fixed;
+    top: -60px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 12px 20px;
+    background-color: var(--card-bg);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    color: var(--text-color);
+    z-index: 2000;
+    font-size: 14px;
+    transition: top 0.3s ease;
+    border-left: 4px solid var(--primary-color);
+    max-width: 90%;
+    word-break: break-word;
+}
+
+.notification.show {
+    top: 20px;
+}
+
+.notification.info {
+    border-left-color: var(--primary-color);
+}
+
+.notification.success {
+    border-left-color: var(--success-color);
+}
+
+.notification.error {
+    border-left-color: var(--error-color);
+}
+
+/* 媒体查询，在不同屏幕尺寸下调整结果项布局 */
+@media (min-width: 1200px) {
+    /* 在大屏幕上显示3列 */
+    .result-item {
+        width: calc(33.333% - 10px);
+    }
+}
+
+/* 自定义预览区域滚动条样式 */
+.preview-container::-webkit-scrollbar {
+    width: 6px;
+}
+
+.preview-container::-webkit-scrollbar-track {
+    background: var(--border-color);
+    border-radius: 3px;
+}
+
+.preview-container::-webkit-scrollbar-thumb {
+    background-color: var(--primary-color);
+    border-radius: 3px;
 } 

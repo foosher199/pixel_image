@@ -20,6 +20,8 @@ document.addEventListener('DOMContentLoaded', () => {
     initElements();
     // 绑定事件
     bindEvents();
+    // 设置滚动监听
+    setupScrollListeners();
     // 检查系统主题偏好
     checkPreferredTheme();
 });
@@ -189,6 +191,14 @@ function handleFiles(files) {
     
     // 将新图片添加到图片数组
     validFiles.forEach(file => {
+        // 检查是否已经存在同名图片
+        const isDuplicate = app.images.some(img => img.name === file.name);
+        if (isDuplicate) {
+            // 显示提示信息
+            showNotification(`跳过重复图片: ${file.name}`);
+            return;
+        }
+        
         const reader = new FileReader();
         reader.onload = function(e) {
             const image = new Image();
@@ -212,9 +222,39 @@ function handleFiles(files) {
     });
 }
 
+// 显示通知提示
+function showNotification(message, type = 'info') {
+    // 创建通知元素
+    const notification = document.createElement('div');
+    notification.className = `notification ${type}`;
+    notification.textContent = message;
+    
+    // 添加到页面
+    document.body.appendChild(notification);
+    
+    // 显示动画
+    setTimeout(() => {
+        notification.classList.add('show');
+    }, 10);
+    
+    // 自动消失
+    setTimeout(() => {
+        notification.classList.remove('show');
+        setTimeout(() => {
+            document.body.removeChild(notification);
+        }, 300);
+    }, 3000);
+}
+
 // 更新缩略图显示
 function updateThumbnails() {
     app.elements.thumbnailsContainer.innerHTML = '';
+    
+    if (app.images.length === 0) {
+        // 当没有图片时，保持容器为空，CSS将显示提示信息
+        app.elements.thumbnailsContainer.classList.remove('has-overflow');
+        return;
+    }
     
     app.images.forEach((image, index) => {
         const thumbnail = document.createElement('div');
@@ -236,7 +276,56 @@ function updateThumbnails() {
         thumbnail.appendChild(removeBtn);
         app.elements.thumbnailsContainer.appendChild(thumbnail);
     });
+    
+    // 检查是否需要显示滚动指示器
+    setTimeout(() => {
+        checkScrollOverflow();
+    }, 100);
 }
+
+// 检查滚动区域是否溢出
+function checkScrollOverflow() {
+    // 检查缩略图容器
+    const thumbnailsContainer = app.elements.thumbnailsContainer;
+    const hasThumbnailsOverflow = thumbnailsContainer.scrollWidth > thumbnailsContainer.clientWidth;
+    
+    if (hasThumbnailsOverflow) {
+        thumbnailsContainer.classList.add('has-overflow');
+    } else {
+        thumbnailsContainer.classList.remove('has-overflow');
+    }
+    
+    // 检查预览容器
+    const previewContainer = app.elements.previewContainer;
+    const hasPreviewOverflow = previewContainer.scrollHeight > previewContainer.clientHeight;
+    
+    if (hasPreviewOverflow) {
+        previewContainer.classList.add('has-overflow');
+    } else {
+        previewContainer.classList.remove('has-overflow');
+    }
+}
+
+// 为预览容器添加滚动事件监听
+function setupScrollListeners() {
+    app.elements.previewContainer.addEventListener('scroll', handlePreviewScroll);
+}
+
+// 处理预览容器滚动事件
+function handlePreviewScroll() {
+    const container = app.elements.previewContainer;
+    const scrollBottom = container.scrollHeight - container.scrollTop - container.clientHeight;
+    
+    // 当滚动到底部附近时，隐藏底部阴影
+    if (scrollBottom < 30) {
+        container.classList.remove('has-overflow');
+    } else {
+        container.classList.add('has-overflow');
+    }
+}
+
+// 监听窗口大小变化，以更新滚动指示器状态
+window.addEventListener('resize', checkScrollOverflow);
 
 // 移除图片
 function removeImage(index) {
@@ -315,6 +404,12 @@ async function processImages() {
         app.elements.progressContainer.classList.add('hidden');
         app.elements.resultActions.classList.remove('hidden');
         app.processing = false;
+        
+        // 滚动到预览区域的顶部
+        app.elements.previewContainer.scrollTop = 0;
+        
+        // 显示成功通知
+        showNotification(`成功处理了 ${app.results.length} 张图片`, 'success');
     }, 500);
 }
 
@@ -524,6 +619,7 @@ function addResultToPreview(result, index) {
     const img = document.createElement('img');
     img.src = result.src;
     img.alt = result.name;
+    img.loading = 'lazy'; // 懒加载图片，提高性能
     
     const overlay = document.createElement('div');
     overlay.className = 'result-overlay';
@@ -551,12 +647,19 @@ function addResultToPreview(result, index) {
         
         if (resultItem.classList.contains('selected')) {
             app.selectedImages.push(index);
+            
+            // 如果是第一个被选中的图片，启用"下载选中"按钮
+            if (app.selectedImages.length === 1) {
+                app.elements.downloadSelectedBtn.disabled = false;
+            }
         } else {
             app.selectedImages = app.selectedImages.filter(i => i !== index);
+            
+            // 如果没有选中的图片，禁用"下载选中"按钮
+            if (app.selectedImages.length === 0) {
+                app.elements.downloadSelectedBtn.disabled = true;
+            }
         }
-        
-        // 更新下载选中按钮状态
-        app.elements.downloadSelectedBtn.disabled = app.selectedImages.length === 0;
     });
     
     app.elements.previewContainer.appendChild(resultItem);
