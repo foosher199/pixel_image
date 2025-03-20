@@ -11,25 +11,34 @@
 <body>
     <div class="app-container">
         <header>
-            <h1>像素图片转换器</h1>
-            <p>将普通图片转换为像素风格图片</p>
-            <div class="theme-toggle">
-                <button id="theme-switch" aria-label="切换主题">
-                    <svg class="sun-icon" viewBox="0 0 24 24" width="24" height="24">
-                        <circle cx="12" cy="12" r="5"></circle>
-                        <line x1="12" y1="1" x2="12" y2="3"></line>
-                        <line x1="12" y1="21" x2="12" y2="23"></line>
-                        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
-                        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
-                        <line x1="1" y1="12" x2="3" y2="12"></line>
-                        <line x1="21" y1="12" x2="23" y2="12"></line>
-                        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
-                        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
-                    </svg>
-                    <svg class="moon-icon" viewBox="0 0 24 24" width="24" height="24">
-                        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
-                    </svg>
-                </button>
+            <h1 data-i18n="app.title">像素图片转换器</h1>
+            <p data-i18n="app.subtitle">将普通图片转换为像素风格图片</p>
+            <div class="header-controls">
+                <div class="language-toggle">
+                    <label for="language-selector" data-i18n="language.select">语言</label>
+                    <select id="language-selector" class="select-control">
+                        <option value="zh">中文</option>
+                        <option value="en">English</option>
+                    </select>
+                </div>
+                <div class="theme-toggle">
+                    <button id="theme-switch" aria-label="切换主题">
+                        <svg class="sun-icon" viewBox="0 0 24 24" width="24" height="24">
+                            <circle cx="12" cy="12" r="5"></circle>
+                            <line x1="12" y1="1" x2="12" y2="3"></line>
+                            <line x1="12" y1="21" x2="12" y2="23"></line>
+                            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+                            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+                            <line x1="1" y1="12" x2="3" y2="12"></line>
+                            <line x1="21" y1="12" x2="23" y2="12"></line>
+                            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+                            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+                        </svg>
+                        <svg class="moon-icon" viewBox="0 0 24 24" width="24" height="24">
+                            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>
+                        </svg>
+                    </button>
+                </div>
             </div>
         </header>
 
@@ -43,9 +52,9 @@
                             <line x1="12" y1="3" x2="12" y2="15"></line>
                         </svg>
                     </div>
-                    <h2>上传图片</h2>
-                    <p>点击或拖放图片到此区域</p>
-                    <p class="upload-info">支持JPG、PNG、GIF、WebP格式</p>
+                    <h2 data-i18n="upload.title">上传图片</h2>
+                    <p data-i18n="upload.dropzone">点击或拖放图片到此区域</p>
+                    <p class="upload-info" data-i18n="upload.formats">支持JPG、PNG、GIF、WebP格式</p>
                     <input type="file" id="file-input" multiple accept="image/*" class="file-input">
                 </div>
                 <div class="thumbnails-container" id="thumbnails-container">
@@ -54,46 +63,46 @@
             </section>
 
             <section class="controls-section">
-                <h2>像素化参数</h2>
+                <h2 data-i18n="controls.title">像素化参数</h2>
                 <div class="control-group">
-                    <label for="pixel-size">像素大小：</label>
+                    <label for="pixel-size" data-i18n="controls.pixelSize">像素大小：</label>
                     <input type="range" id="pixel-size" min="1" max="20" value="8" class="slider">
                     <span class="slider-value" id="pixel-size-value">8</span>px
                 </div>
                 <div class="control-group">
-                    <label for="color-mode">色彩模式：</label>
+                    <label for="color-mode" data-i18n="controls.colorMode">色彩模式：</label>
                     <select id="color-mode" class="select-control">
-                        <option value="original">原始色彩</option>
-                        <option value="limited">有限调色板 (16色)</option>
-                        <option value="grayscale">灰度</option>
-                        <option value="sepia">复古色调</option>
+                        <option value="original" data-i18n="colorModes.original">原始色彩</option>
+                        <option value="limited" data-i18n="colorModes.limited">有限调色板 (16色)</option>
+                        <option value="grayscale" data-i18n="colorModes.grayscale">灰度</option>
+                        <option value="sepia" data-i18n="colorModes.sepia">复古色调</option>
                     </select>
                 </div>
                 <div class="control-group">
-                    <label for="dithering">抖动效果：</label>
+                    <label for="dithering" data-i18n="controls.dithering">抖动效果：</label>
                     <input type="checkbox" id="dithering" class="toggle-switch">
                 </div>
                 <div class="control-group">
-                    <label for="smooth">平滑处理：</label>
+                    <label for="smooth" data-i18n="controls.smooth">平滑处理：</label>
                     <input type="checkbox" id="smooth" class="toggle-switch">
                 </div>
                 <div class="control-group">
-                    <label for="output-size">输出尺寸：</label>
+                    <label for="output-size" data-i18n="controls.outputSize">输出尺寸：</label>
                     <select id="output-size" class="select-control">
-                        <option value="original">原始尺寸</option>
-                        <option value="2x">2倍大小</option>
-                        <option value="4x">4倍大小</option>
+                        <option value="original" data-i18n="outputSizes.original">原始尺寸</option>
+                        <option value="2x" data-i18n="outputSizes.double">2倍大小</option>
+                        <option value="4x" data-i18n="outputSizes.quadruple">4倍大小</option>
                     </select>
                 </div>
                 <div class="control-group">
-                    <label for="output-format">输出格式：</label>
+                    <label for="output-format" data-i18n="controls.outputFormat">输出格式：</label>
                     <select id="output-format" class="select-control">
                         <option value="png">PNG</option>
                         <option value="jpg">JPG</option>
                     </select>
                 </div>
                 <div class="preset-controls">
-                    <h3>预设</h3>
+                    <h3 data-i18n="controls.presets">预设</h3>
                     <div class="preset-buttons">
                         <button class="preset-button" data-preset="gameboy">Game Boy</button>
                         <button class="preset-button" data-preset="nes">NES 8位</button>
@@ -101,16 +110,16 @@
                     </div>
                 </div>
                 <div class="action-buttons">
-                    <button id="process-btn" class="primary-button" disabled>开始处理</button>
-                    <button id="clear-btn" class="secondary-button" disabled>清除全部</button>
+                    <button id="process-btn" class="primary-button" disabled data-i18n="controls.process">开始处理</button>
+                    <button id="clear-btn" class="secondary-button" disabled data-i18n="controls.clear">清除全部</button>
                 </div>
             </section>
 
             <section class="preview-section">
-                <h2>预览与结果</h2>
+                <h2 data-i18n="preview.title">预览与结果</h2>
                 <div class="preview-container" id="preview-container">
                     <div class="empty-preview">
-                        <p>上传图片后在此处预览结果</p>
+                        <p data-i18n="preview.empty">上传图片后在此处预览结果</p>
                     </div>
                 </div>
                 <div class="progress-bar-container hidden" id="progress-container">
@@ -118,50 +127,53 @@
                     <div class="progress-text" id="progress-text">0%</div>
                 </div>
                 <div class="result-actions hidden" id="result-actions">
-                    <button id="download-all-btn" class="primary-button">下载全部(ZIP)</button>
-                    <button id="download-selected-btn" class="secondary-button">下载选中</button>
+                    <button id="download-all-btn" class="primary-button" data-i18n="preview.downloadAll">下载全部(ZIP)</button>
+                    <button id="download-selected-btn" class="secondary-button" data-i18n="preview.downloadSelected">下载选中</button>
                 </div>
             </section>
         </main>
 
         <footer>
-            <p>像素图片转换器 &copy; 2023 | 在浏览器中本地处理，您的图片不会上传至任何服务器</p>
-            <a href="#" id="help-btn">使用帮助</a>
+            <p>
+                <span data-i18n="footer.copyright">像素图片转换器 &copy; 2023</span> | 
+                <span data-i18n="footer.privacy">在浏览器中本地处理，您的图片不会上传至任何服务器</span>
+            </p>
+            <a href="#" id="help-btn" data-i18n="footer.help">使用帮助</a>
         </footer>
 
         <!-- 帮助对话框 -->
         <div class="modal" id="help-modal">
             <div class="modal-content">
                 <span class="close-modal">&times;</span>
-                <h2>使用帮助</h2>
-                <h3>如何使用</h3>
+                <h2 data-i18n="help.title">使用帮助</h2>
+                <h3 data-i18n="help.howto">如何使用</h3>
                 <ol>
-                    <li>点击上传区域或将图片拖放到上传区域</li>
-                    <li>调整像素化参数</li>
-                    <li>点击"开始处理"按钮</li>
-                    <li>等待处理完成后，可以预览结果并下载</li>
+                    <li data-i18n="help.steps.upload">点击上传区域或将图片拖放到上传区域</li>
+                    <li data-i18n="help.steps.adjust">调整像素化参数</li>
+                    <li data-i18n="help.steps.process">点击"开始处理"按钮</li>
+                    <li data-i18n="help.steps.download">等待处理完成后，可以预览结果并下载</li>
                 </ol>
-                <h3>参数说明</h3>
+                <h3 data-i18n="help.parameters">参数说明</h3>
                 <ul>
-                    <li><strong>像素大小</strong>：控制像素的粒度，值越大，像素块越大</li>
-                    <li><strong>色彩模式</strong>：选择不同的色彩处理方式</li>
-                    <li><strong>抖动效果</strong>：增加一些随机性，使色彩过渡更平滑</li>
-                    <li><strong>平滑处理</strong>：对像素化结果进行平滑处理</li>
-                    <li><strong>输出尺寸</strong>：控制最终图片的尺寸</li>
-                    <li><strong>输出格式</strong>：选择保存的图片格式</li>
+                    <li><strong data-i18n="controls.pixelSize">像素大小</strong>：<span data-i18n="help.descriptions.pixelSize">控制像素的粒度，值越大，像素块越大</span></li>
+                    <li><strong data-i18n="controls.colorMode">色彩模式</strong>：<span data-i18n="help.descriptions.colorMode">选择不同的色彩处理方式</span></li>
+                    <li><strong data-i18n="controls.dithering">抖动效果</strong>：<span data-i18n="help.descriptions.dithering">增加一些随机性，使色彩过渡更平滑</span></li>
+                    <li><strong data-i18n="controls.smooth">平滑处理</strong>：<span data-i18n="help.descriptions.smooth">对像素化结果进行平滑处理</span></li>
+                    <li><strong data-i18n="controls.outputSize">输出尺寸</strong>：<span data-i18n="help.descriptions.outputSize">控制最终图片的尺寸</span></li>
+                    <li><strong data-i18n="controls.outputFormat">输出格式</strong>：<span data-i18n="help.descriptions.outputFormat">选择保存的图片格式</span></li>
                 </ul>
-                <h3>预设说明</h3>
+                <h3 data-i18n="help.presets">预设说明</h3>
                 <ul>
-                    <li><strong>Game Boy</strong>：使用经典Game Boy的4色调色板</li>
-                    <li><strong>NES 8位</strong>：模拟任天堂NES游戏机的色彩和像素效果</li>
-                    <li><strong>CGA</strong>：模拟早期CGA显示器的色彩方案</li>
+                    <li><strong>Game Boy</strong>：<span data-i18n="help.presetDescriptions.gameboy">使用经典Game Boy的4色调色板</span></li>
+                    <li><strong>NES 8位</strong>：<span data-i18n="help.presetDescriptions.nes">模拟任天堂NES游戏机的色彩和像素效果</span></li>
+                    <li><strong>CGA</strong>：<span data-i18n="help.presetDescriptions.cga">模拟早期CGA显示器的色彩方案</span></li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
-    <!-- 如果需要使用JSZip库来进行ZIP打包下载 -->
+    <!-- 使用本地jszip库 -->
     <script src="libs/jszip.min.js"></script>
+    <script type="module" src="script.js"></script>
 </body>
 </html> 

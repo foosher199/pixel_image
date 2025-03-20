@@ -1,3 +1,6 @@
+// 导入国际化模块
+import i18n from './i18n/index.js';
+
 // 全局变量
 const app = {
     // DOM元素
@@ -11,7 +14,17 @@ const app = {
     // 处理状态
     processing: false,
     // 当前深色模式状态
-    darkMode: false
+    darkMode: false,
+    files: [],
+    thumbnails: [],
+    settings: {
+        pixelSize: 8,
+        colorMode: 'original',
+        dithering: false,
+        smooth: false,
+        outputSize: 'original',
+        outputFormat: 'png'
+    }
 };
 
 // 初始化应用
@@ -24,6 +37,14 @@ document.addEventListener('DOMContentLoaded', () => {
     setupScrollListeners();
     // 检查系统主题偏好
     checkPreferredTheme();
+    // 设置语言
+    i18n.init();
+    // 设置空状态文本
+    updateEmptyStateText();
+    // 检查溢出
+    checkScrollOverflow();
+    // 设置窗口大小变化监听
+    window.addEventListener('resize', checkScrollOverflow);
 });
 
 // 初始化DOM元素引用
@@ -185,7 +206,7 @@ function handleFiles(files) {
     const validFiles = Array.from(files).filter(file => file.type.startsWith('image/'));
     
     if (validFiles.length === 0) {
-        alert('请选择有效的图片文件');
+        showNotification(i18n.t('notifications.invalidFiles'));
         return;
     }
     
@@ -195,7 +216,7 @@ function handleFiles(files) {
         const isDuplicate = app.images.some(img => img.name === file.name);
         if (isDuplicate) {
             // 显示提示信息
-            showNotification(`跳过重复图片: ${file.name}`);
+            showNotification(i18n.t('notifications.duplicate', { filename: file.name }));
             return;
         }
         
@@ -345,7 +366,7 @@ function clearAll() {
     app.selectedImages = [];
     
     updateThumbnails();
-    app.elements.previewContainer.innerHTML = '<div class="empty-preview"><p>上传图片后在此处预览结果</p></div>';
+    app.elements.previewContainer.innerHTML = `<div class="empty-preview"><p>${i18n.t('preview.empty')}</p></div>`;
     app.elements.resultActions.classList.add('hidden');
     
     app.elements.processBtn.disabled = true;
@@ -399,18 +420,8 @@ async function processImages() {
     app.elements.progressBar.style.width = '100%';
     app.elements.progressText.textContent = '100%';
     
-    // 隐藏进度条，显示下载按钮
-    setTimeout(() => {
-        app.elements.progressContainer.classList.add('hidden');
-        app.elements.resultActions.classList.remove('hidden');
-        app.processing = false;
-        
-        // 滚动到预览区域的顶部
-        app.elements.previewContainer.scrollTop = 0;
-        
-        // 显示成功通知
-        showNotification(`成功处理了 ${app.results.length} 张图片`, 'success');
-    }, 500);
+    // 完成处理后的逻辑
+    setTimeout(finishProcessing, 500);
 }
 
 // 像素化处理单张图片
@@ -629,7 +640,7 @@ function addResultToPreview(result, index) {
     
     const downloadBtn = document.createElement('button');
     downloadBtn.className = 'download-btn';
-    downloadBtn.innerHTML = '下载';
+    downloadBtn.textContent = i18n.t('preview.download'); // 使用i18n显示下载文本
     downloadBtn.addEventListener('click', (e) => {
         e.stopPropagation();
         downloadSingleResult(index);
@@ -728,7 +739,7 @@ async function downloadAllResults() {
         URL.revokeObjectURL(link.href);
     } catch (err) {
         console.error('创建ZIP文件时出错:', err);
-        alert('下载失败，请稍后重试');
+        showNotification(i18n.t('notifications.downloadError'), 'error');
     }
 }
 
@@ -777,6 +788,57 @@ async function downloadSelectedResults() {
         URL.revokeObjectURL(link.href);
     } catch (err) {
         console.error('创建ZIP文件时出错:', err);
-        alert('下载失败，请稍后重试');
+        showNotification(i18n.t('notifications.downloadError'), 'error');
     }
+}
+
+// 语言变更事件监听
+document.addEventListener('languageChanged', () => {
+    // 更新预览区的空状态消息
+    if (app.results.length === 0 && app.elements.previewContainer.querySelector('.empty-preview')) {
+        app.elements.previewContainer.querySelector('.empty-preview p').textContent = i18n.t('preview.empty');
+    }
+    
+    // 更新缩略图区域的空状态消息
+    updateEmptyStateText();
+    
+    // 更新所有下拉菜单选项
+    document.querySelectorAll('select option[data-i18n]').forEach(option => {
+        const key = option.getAttribute('data-i18n');
+        option.textContent = i18n.t(key);
+    });
+    
+    // 重新加载预览区域中的下载按钮文本
+    document.querySelectorAll('.download-btn').forEach(btn => {
+        btn.textContent = i18n.t('preview.download');
+    });
+});
+
+// 完成处理
+function finishProcessing() {
+    app.processing = false;
+    
+    // 隐藏进度条，显示下载按钮
+    app.elements.progressContainer.classList.add('hidden');
+    app.elements.resultActions.classList.remove('hidden');
+    
+    // 禁用下载选中按钮
+    app.elements.downloadSelectedBtn.disabled = app.selectedImages.length === 0;
+    
+    // 滚动到预览区域的顶部
+    app.elements.previewContainer.scrollTop = 0;
+    
+    // 显示成功通知
+    showNotification(i18n.t('notifications.processed', { count: app.results.length }), 'success');
+    
+    // 检查预览容器是否溢出
+    checkScrollOverflow();
+}
+
+// 导出应用状态对象（用于调试）
+window.app = app;
+
+// 更新空状态文本
+function updateEmptyStateText() {
+    app.elements.thumbnailsContainer.setAttribute('data-empty-text', i18n.t('upload.empty'));
 } 
