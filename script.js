@@ -122,15 +122,29 @@ function bindEvents() {
 
 // 检查系统主题偏好
 function checkPreferredTheme() {
+    // 先检查本地存储的主题设置
+    const savedTheme = localStorage.getItem('pixelizer-theme');
+    
+    if (savedTheme === 'dark') {
+        document.body.classList.add('dark-theme');
+        app.darkMode = true;
+        return;
+    }
+    
+    // 如果没有保存的设置，检查系统偏好
     if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
-        toggleTheme();
+        document.body.classList.add('dark-theme');
+        app.darkMode = true;
     }
 }
 
 // 切换深色/浅色主题
 function toggleTheme() {
     document.body.classList.toggle('dark-theme');
-    app.darkMode = !app.darkMode;
+    app.darkMode = document.body.classList.contains('dark-theme');
+    
+    // 保存到本地存储
+    localStorage.setItem('pixelizer-theme', app.darkMode ? 'dark' : 'light');
 }
 
 // 打开帮助对话框

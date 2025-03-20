@@ -55,6 +55,15 @@ header {
     margin-bottom: 30px;
     position: relative;
     padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.header-title {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 header h1 {
@@ -73,45 +82,73 @@ header p {
     opacity: 0.8;
 }
 
-.theme-toggle {
+/* 头部控件样式 */
+.header-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
     position: absolute;
     top: 20px;
-    right: 10px;
+    right: 20px;
 }
 
-#theme-switch {
+/* 语言切换样式 */
+.language-toggle {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.language-toggle label {
+    font-size: 14px;
+    color: var(--text-color);
+}
+
+#language-selector {
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 4px 8px;
+    background-color: var(--card-bg);
+    color: var(--text-color);
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+#language-selector:hover {
+    border-color: var(--primary-color);
+}
+
+/* 主题切换样式 */
+.theme-toggle button {
     background: none;
     border: none;
-    cursor: pointer;
-    width: 40px;
-    height: 40px;
+    padding: 5px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
+    cursor: pointer;
+    color: var(--text-color);
+    transition: background-color 0.2s ease;
+    width: 34px;
+    height: 34px;
     background-color: var(--card-bg);
     box-shadow: var(--shadow);
-    transition: var(--transition);
 }
 
-#theme-switch:hover {
+.theme-toggle button:hover {
     transform: scale(1.05);
 }
 
 .sun-icon, .moon-icon {
+    width: 20px;
+    height: 20px;
+    stroke: currentColor;
     fill: none;
-    stroke: var(--text-color);
     stroke-width: 2;
     stroke-linecap: round;
     stroke-linejoin: round;
-}
-
-.dark-theme .sun-icon {
-    display: block;
-}
-
-.dark-theme .moon-icon {
-    display: none;
 }
 
 .sun-icon {
@@ -120,6 +157,14 @@ header p {
 
 .moon-icon {
     display: block;
+}
+
+.dark-theme .sun-icon {
+    display: block;
+}
+
+.dark-theme .moon-icon {
+    display: none;
 }
 
 /* 主内容布局 */
@@ -849,90 +894,12 @@ footer a:hover {
     border-radius: 3px;
 }
 
-/* 添加header-controls样式 */
-.header-controls {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-    margin-top: 10px;
-}
-
-.language-toggle {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-}
-
-.language-toggle label {
-    font-size: 14px;
-    color: var(--text-color);
-}
-
-#language-selector {
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
-    padding: 4px 8px;
-    background-color: var(--surface-color);
-    color: var(--text-color);
-    font-size: 14px;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-#language-selector:hover {
-    border-color: var(--primary-color);
-}
-
-/* 更新主题切换按钮样式 */
-.theme-toggle button {
-    background: none;
-    border: none;
-    padding: 5px;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: var(--text-color);
-    transition: background-color 0.2s ease;
-}
-
-.theme-toggle button:hover {
-    background-color: var(--hover-color);
-}
-
-.sun-icon, .moon-icon {
-    width: 20px;
-    height: 20px;
-    stroke: currentColor;
-    fill: none;
-    stroke-width: 2;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-}
-
-.sun-icon {
-    display: var(--sun-icon-display, inline-block);
-}
-
-.moon-icon {
-    display: var(--moon-icon-display, none);
-}
-
-/* 暗色模式下图标切换 */
-[data-theme="dark"] .sun-icon {
-    display: var(--sun-icon-display-dark, none);
-}
-
-[data-theme="dark"] .moon-icon {
-    display: var(--moon-icon-display-dark, inline-block);
-}
-
 /* 优化在小屏幕上的显示 */
 @media (max-width: 576px) {
     .header-controls {
-        flex-direction: row;
+        position: static;
         justify-content: center;
         margin-top: 15px;
+        flex-wrap: wrap;
     }
 } 
